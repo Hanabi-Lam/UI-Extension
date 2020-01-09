@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sirenix.OdinInspector;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,7 +7,7 @@ using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace Brent
+namespace Brent.UI
 {
     /// TODO
     /// 选中框 按下的时候隐藏 抬起的时候显示
@@ -15,40 +16,34 @@ namespace Brent
     /// <summary>
     /// 适用与多种点击输入的按钮
     /// </summary>
-    public class UIButton : Button,IDragHandler
-    {
-        public ButtonClickEnum buttonClickEnum = ButtonClickEnum.Double|ButtonClickEnum.LongPress;
+    public class UIButton : Button, IDragHandler
+    {   
+        public ButtonClickEnum buttonClickEnum = ButtonClickEnum.All ;
         public int itemId = 0;                          //按钮对应显示的物品id
 
         public int clickThreshold = 500;
         public int doubleClickThreshold = 300;
         public float pressThreshold = 0.5f;             //触发长按的时间
 
-        
-
         public ButtonClickedEvent onEnterPress;         //进入长按的事件
         public ButtonClickedEvent onExitPress;          //退出长按的事件
         public ButtonClickedEvent onDoubleClick;        //双击的事件
-
-
-
-        public Image SelectedBg;                        //选中背景框   
-        public Image PressedBg;                         //按下提示       
+      
 
         private DateTime firstTime;                     //双击 记录第一次点击时间
         private DateTime secondTime;                    //双击 记录第二次点击时间
-        private DateTime lastTime=default;              //上一次点击的时间 每一次抬起都去记录
+        private DateTime lastTime = default;            //上一次点击的时间 每一次抬起都去记录
 
         private bool isPointerDown = false;
         private bool longPressTriggered = false;
         private float timePressStarted;                 //按钮开始点击的时间
 
-        private RectTransform rect;                     
+        private RectTransform rect;
 
         protected override void Start()
         {
             base.Start();
-            rect= GetComponent<RectTransform>();
+            rect = GetComponent<RectTransform>();
         }
         public override void OnPointerDown(PointerEventData eventData)
         {
@@ -58,7 +53,7 @@ namespace Brent
             }
 
             base.OnPointerDown(eventData);
-      
+
             timePressStarted = Time.time;
             isPointerDown = true;
             longPressTriggered = false;
@@ -84,11 +79,11 @@ namespace Brent
             if (buttonClickEnum.HasFlag(ButtonClickEnum.Double))
             {
                 DoubleMonitor();
-            }         
-            isPointerDown = false;         
-          
+            }
+            isPointerDown = false;
+
         }
-      
+
         public override void OnPointerClick(PointerEventData eventData)
         {
             if (!interactable)
@@ -107,7 +102,7 @@ namespace Brent
             {
                 LongPressMonitor();
             }
-           
+
         }
         private void ClickMonitor()
         {
@@ -115,7 +110,8 @@ namespace Brent
             {
                 onClick?.Invoke();
             }
-            else {
+            else
+            {
                 var intervalTime = DateTime.Now - lastTime;
                 float milliSeconds = intervalTime.Seconds * 1000 + intervalTime.Milliseconds;
                 if (milliSeconds > clickThreshold)
@@ -123,7 +119,7 @@ namespace Brent
                     onClick?.Invoke();
                 }
             }
-            
+
         }
         private void DoubleMonitor()
         {
@@ -131,15 +127,12 @@ namespace Brent
             {
                 var intervalTime = secondTime - firstTime;
                 float milliSeconds = intervalTime.Seconds * 1000 + intervalTime.Milliseconds;
-                print(milliSeconds);       
+                //print(milliSeconds);       
                 if (milliSeconds < doubleClickThreshold)
                 {
                     DoubleClick();
                 }
-                else
-                {
-                    UpdateTime();
-                }                
+                UpdateTime();
             }
         }
 
@@ -173,7 +166,7 @@ namespace Brent
         /// </summary>
         private void DoubleClick()
         {
-            onDoubleClick?.Invoke();        
+            onDoubleClick?.Invoke();
         }
         /// <summary>
         /// 重置按钮事件  
@@ -198,6 +191,7 @@ namespace Brent
         [System.Flags]
         public enum ButtonClickEnum
         {
+            None =0,
             Single = 1 << 1,
             Double = 1 << 2,
             LongPress = 1 << 3,
