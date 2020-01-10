@@ -25,9 +25,11 @@ namespace Brent.UI
         public int doubleClickThreshold = 300;
         public float pressThreshold = 0.5f;             //触发长按的时间
 
-        public ButtonClickedEvent onEnterPress;         //进入长按的事件
-        public ButtonClickedEvent onExitPress;          //退出长按的事件
         public ButtonClickedEvent onDoubleClick;        //双击的事件
+        public ButtonClickedEvent onEnterPress;         //进入长按的事件
+        public ButtonClickedEvent onPress;
+        public ButtonClickedEvent onExitPress;          //退出长按的事件
+       
       
 
         private DateTime firstTime;                     //双击 记录第一次点击时间
@@ -58,7 +60,6 @@ namespace Brent.UI
             isPointerDown = true;
             longPressTriggered = false;
 
-
             if (firstTime.Equals(default))
             {
                 firstTime = DateTime.Now;
@@ -67,7 +68,6 @@ namespace Brent.UI
             {
                 secondTime = DateTime.Now;
             }
-
         }
         public override void OnPointerUp(PointerEventData eventData)
         {
@@ -86,7 +86,7 @@ namespace Brent.UI
 
         public override void OnPointerClick(PointerEventData eventData)
         {
-            if (!interactable)
+            if (!interactable || longPressTriggered)
             {
                 return;
             }
@@ -140,18 +140,31 @@ namespace Brent.UI
         {
             if (isPointerDown && !longPressTriggered)
             {
+                //触发了第一次按下
                 if (Time.time - timePressStarted > pressThreshold)
                 {
-                    longPressTriggered = true;
                     onEnterPress?.Invoke();
+                    onPress?.Invoke();
+                    timePressStarted = Time.time;
+                    longPressTriggered = true;
+                   
                 }
             }
+            if (longPressTriggered)
+            {
+                if (Time.time - timePressStarted > pressThreshold)
+                {
+                    onPress?.Invoke();
+                    timePressStarted = Time.time;
+                }              
+            }
+
             if (!isPointerDown && longPressTriggered)
             {
                 onExitPress?.Invoke();
                 longPressTriggered = false;
                 ResetTime();
-            }
+            }        
         }
         /// <summary>
         /// 单击的封装
@@ -187,7 +200,28 @@ namespace Brent.UI
         {
             rect.anchoredPosition += eventData.delta;
         }
-
+        /// <summary>
+        /// 开启按钮功能
+        /// </summary>
+        public void OpenFeatures(ButtonClickEnum feature)
+        {
+            if (buttonClickEnum.HasFlag(feature))
+            {
+                return;
+            }
+            buttonClickEnum |= feature;
+        }
+        /// <summary>
+        /// 关闭按钮功能
+        /// </summary>
+        public void CloseFeatures(ButtonClickEnum feature)
+        {
+            if (!buttonClickEnum.HasFlag(feature))
+            {
+                return;
+            }
+            buttonClickEnum &= (~feature);
+        }
         [System.Flags]
         public enum ButtonClickEnum
         {

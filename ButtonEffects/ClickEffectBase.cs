@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace Brent.UI
 {
-    public class ClickEffectBase : ButtonEffectBase
+    public abstract class ClickEffectBase : ButtonEffectBase
     {
         //多选模式
         public static bool IsMultipleChoiceMode { get; set; }
@@ -43,17 +43,11 @@ namespace Brent.UI
         /// </summary>
         public virtual void ShowBox()
         {
-            if (SelectBg != null)
-            {
-                SelectBg.transform.localScale = Vector3.one;
-            }
+           
         }
         public virtual void HideBox()
         {
-            if (SelectBg != null)
-            {
-                SelectBg.transform.localScale = Vector3.zero;
-            }
+            
         }
     }
 }
