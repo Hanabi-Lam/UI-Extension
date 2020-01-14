@@ -34,7 +34,7 @@ namespace Brent.UI
             var _uiButton = (UIButton)target;
 
 
-            SirenixEditorGUI.BeginHorizontalToolbar( 28, 4);
+            SirenixEditorGUI.BeginHorizontalToolbar(28, 4);
             {
                 bool isSingle = _uiButton.buttonClickEnum.HasFlag(UIButton.ButtonClickEnum.Single);
                 if (SirenixEditorGUI.ToolbarButton("单击", isSingle))
@@ -47,7 +47,7 @@ namespace Brent.UI
                 if (SirenixEditorGUI.ToolbarButton("双击", isDouble))
                 {
                     _uiButton.buttonClickEnum = isDouble ? _uiButton.buttonClickEnum &= (~UIButton.ButtonClickEnum.Double) :
-                                                           _uiButton.buttonClickEnum |= UIButton.ButtonClickEnum.Double;                
+                                                           _uiButton.buttonClickEnum |= UIButton.ButtonClickEnum.Double;
                 }
 
                 bool isLongPress = _uiButton.buttonClickEnum.HasFlag(UIButton.ButtonClickEnum.LongPress);
@@ -60,12 +60,12 @@ namespace Brent.UI
                 bool isAll = _uiButton.buttonClickEnum.HasFlag(UIButton.ButtonClickEnum.All);
                 if (SirenixEditorGUI.ToolbarButton("所有", isAll))
                 {
-                    _uiButton.buttonClickEnum = isAll ? _uiButton.buttonClickEnum = UIButton.ButtonClickEnum.None:
+                    _uiButton.buttonClickEnum = isAll ? _uiButton.buttonClickEnum = UIButton.ButtonClickEnum.None :
                                                            _uiButton.buttonClickEnum = UIButton.ButtonClickEnum.All;
                 }
             }
             SirenixEditorGUI.EndHorizontalToolbar();
-  
+
             EditorGUILayout.PropertyField(_itemId);
             EditorGUILayout.PropertyField(_clickThreshold);
             EditorGUILayout.PropertyField(_doubleClickThreshold);
@@ -74,6 +74,6 @@ namespace Brent.UI
             EditorUtility.SetDirty(target);
         }
 
-       
+
     }
 }
